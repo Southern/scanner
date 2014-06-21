@@ -1,0 +1,13 @@
+language: go
+go:
+  - 1.2
+  - 1.3
+  - tip
+install:
+  - go get code.google.com/p/go.tools/cmd/cover
+  - go get github.com/mattn/goveralls
+script:
+  - go test -v -covermode=count -coverprofile=coverage.out
+  - $(go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+env:
+  secure: XmyxSHjjVfmVXJDB3IdcJ/7PrW3dyyJnKn03osG3W/RJRgNYWvEkHDcqnFvH4fN2EpaRQwhfqSxQOjF0Y4GH3Z+aIaWMN/LJqeK75A8a0Tjuwqc7NLPyWq6llh/ug/t0UPsj5GoISJPoqwXkMJ3QlY2oxJmbgIjMselnVzweJic=
