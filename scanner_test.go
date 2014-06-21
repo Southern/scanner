@@ -3,7 +3,6 @@ package scanner_test
 import (
   "github.com/Southern/scanner"
   "io/ioutil"
-  "os"
   "strings"
   "testing"
 )
@@ -11,16 +10,8 @@ import (
 var s = make(scanner.Scanner, 0)
 
 func TestScannerReadFile(t *testing.T) {
-  Status("Getting current working directory")
-  cd, err := os.Getwd()
-
-  if err != nil {
-    panic("Could not get working directory")
-    return
-  }
-
   Status("Reading all files in testdata directory")
-  files, err := ioutil.ReadDir(strings.Join([]string{cd, "testdata"}, "/"))
+  files, err := ioutil.ReadDir("testdata")
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -29,7 +20,7 @@ func TestScannerReadFile(t *testing.T) {
 
   Status("Scanning all files found in testdata directory")
   for len(files) > 0 {
-    file := strings.Join([]string{cd, "testdata", files[0].Name()}, "/")
+    file := strings.Join([]string{"testdata", files[0].Name()}, "/")
     Status("Scanning file: %s", file)
 
     err, s = s.ReadFile(file)
@@ -48,15 +39,7 @@ func TestScannerNonexistentFile(t *testing.T) {
 }
 
 func TestJoiningLexBackToString(t *testing.T) {
-  Status("Getting current working directory")
-  cd, err := os.Getwd()
-
-  if err != nil {
-    panic("Could not get working directory")
-    return
-  }
-
-  err, data := s.ReadFile(strings.Join([]string{cd, "testdata", "html.txt"}, "/"))
+  err, data := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
