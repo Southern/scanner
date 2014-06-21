@@ -1,6 +1,10 @@
 # Lexer for Go
 
-This is a work in progress. More documentation will be added shortly.
+[![Build Status](https://travis-ci.org/Southern/lexer.svg?branch=master)](https://travis-ci.org/Southern/lexer) [![Coverage Status](https://img.shields.io/coveralls/Southern/lexer.svg)](https://coveralls.io/r/Southern/lexer?branch=master)
+
+[Documentation](https://godoc.org/github.com/Southern/lexer)
+
+This is a work in progress. More documentation, examples, and etc. will be added shortly.
 
 ## License
 Copyright (c) 2014 Colton Baker
