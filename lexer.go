@@ -10,15 +10,22 @@ import (
   "fmt"
   "io/ioutil"
   "regexp"
+  // "strings"
 )
 
+// Lexer definitions that are added to LexerMap
+type LexerDefinition struct {
+  Regex *regexp.Regexp
+  Type  string
+}
+
 // LexerMap holds the regexes that we are wanting to match throughout the
-// file.
-var LexerMap = map[*regexp.Regexp]string{
-  regexp.MustCompile("^\\s+"):               "WHITESPACE",
-  regexp.MustCompile("^(?i)[a-z][a-z0-9]+"): "WORD",
-  regexp.MustCompile("^(?i)([a-z]|[^0-9])"): "CHAR",
-  regexp.MustCompile("^[0-9]+"):             "NUMBER",
+// file. It comes preloaded with the
+var LexerMap = []LexerDefinition{
+  LexerDefinition{regexp.MustCompile("^(?i)[a-z][a-z0-9]+"), "WORD"},
+  LexerDefinition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
+  LexerDefinition{regexp.MustCompile("^(?i)([a-z]|[^0-9])"), "CHAR"},
+  LexerDefinition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
 }
 
 // Lexer is just a double array of strings.
@@ -80,7 +87,8 @@ func (l Lexer) Parse(data interface{}) (error, Lexer) {
   }
 
   for len(data.(string)) > 0 {
-    for r, t := range LexerMap {
+    for _, def := range LexerMap {
+      r, t := def.Regex, def.Type
       str := r.FindString(data.(string))
       if len(str) > 0 {
         l = append(l, []string{t, str})
