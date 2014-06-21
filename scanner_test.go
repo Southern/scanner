@@ -27,13 +27,13 @@ func TestScannerReadFile(t *testing.T) {
     return
   }
 
-  Status("Lexing all files found in testdata directory")
+  Status("Scanning all files found in testdata directory")
   for len(files) > 0 {
     file := strings.Join([]string{cd, "testdata", files[0].Name()}, "/")
-    Status("Lexing file: %s", file)
+    Status("Scanning file: %s", file)
 
     err, s = s.ReadFile(file)
-    Status("Lexed: %+v", s)
+    Status("Scanned: %+v", s)
     files = files[1:]
   }
 }
@@ -63,7 +63,7 @@ func TestJoiningLexBackToString(t *testing.T) {
     return
   }
 
-  Status("Lexed data: %+v", data)
+  Status("Scanned data: %+v", data)
 
   joined := data.Join()
 
