@@ -1,8 +1,8 @@
-# Lexer for Go
+# Scanner for Go, but not just for Go syntax
 
-[![Build Status](https://travis-ci.org/Southern/lexer.svg?branch=master)](https://travis-ci.org/Southern/lexer) [![Coverage Status](https://img.shields.io/coveralls/Southern/lexer.svg)](https://coveralls.io/r/Southern/lexer?branch=master)
+[![Build Status](https://travis-ci.org/Southern/scanner.svg?branch=master)](https://travis-ci.org/Southern/scanner) [![Coverage Status](https://img.shields.io/coveralls/Southern/scanner.svg)](https://coveralls.io/r/Southern/scanner?branch=master)
 
-[Documentation](https://godoc.org/github.com/Southern/lexer)
+[Documentation](https://godoc.org/github.com/Southern/scanner)
 
 This is a work in progress. More documentation, examples, and etc. will be added shortly.
 

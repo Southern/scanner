@@ -1,10 +1,10 @@
 /*
 
-  Lexer that will break down every character, word, whitespace, and number
+  Scanner that will break down every character, word, whitespace, and number
   that is in a file.
 
 */
-package lexer
+package scanner
 
 import (
   "fmt"
@@ -12,23 +12,28 @@ import (
   "regexp"
 )
 
-// Lexer definitions that are added to LexerMap
-type LexerDefinition struct {
+// Scanner definitions that are added to ScannerMap
+type ScannerDefinition struct {
   Regex *regexp.Regexp
   Type  string
 }
 
-// LexerMap holds the regexes that we are wanting to match throughout the
-// file. It comes preloaded with the
-var LexerMap = []LexerDefinition{
-  LexerDefinition{regexp.MustCompile("^(?i)[a-z][a-z0-9]+"), "WORD"},
-  LexerDefinition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
-  LexerDefinition{regexp.MustCompile("^(?i)([a-z]|[^0-9])"), "CHAR"},
-  LexerDefinition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
+/*
+
+ScannerMap holds the regexes that we are wanting to match throughout the
+file. It also contains the type that we want to return if the regex is
+matched.
+
+*/
+var ScannerMap = []ScannerDefinition{
+  ScannerDefinition{regexp.MustCompile("^(?i)[a-z][a-z0-9]+"), "WORD"},
+  ScannerDefinition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
+  ScannerDefinition{regexp.MustCompile("^(?i)([a-z]|[^0-9])"), "CHAR"},
+  ScannerDefinition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
 }
 
-// Lexer is just a double array of strings.
-type Lexer [][]string
+// Scanner is just a double array of strings.
+type Scanner [][]string
 
 /*
 
@@ -62,19 +67,19 @@ type Lexer [][]string
   simply join it back.
 
 */
-func (l Lexer) Join() string {
+func (s Scanner) Join() string {
   var joined string
 
-  for len(l) > 0 {
-    joined = joined + l[0][1]
-    l = l[1:]
+  for len(s) > 0 {
+    joined = joined + s[0][1]
+    s = s[1:]
   }
 
   return joined
 }
 
-func (l Lexer) Parse(data interface{}) (error, Lexer) {
-  l = make([][]string, 0)
+func (s Scanner) Parse(data interface{}) (error, Scanner) {
+  s = make([][]string, 0)
 
   switch data.(type) {
   case []byte:
@@ -82,29 +87,29 @@ func (l Lexer) Parse(data interface{}) (error, Lexer) {
   case string:
     data = data.(string)
   default:
-    return fmt.Errorf("Lexer.Parse only accepts []byte and string types."), l
+    return fmt.Errorf("Scanner.Parse only accepts []byte and string types."), s
   }
 
   for len(data.(string)) > 0 {
-    for _, def := range LexerMap {
+    for _, def := range ScannerMap {
       r, t := def.Regex, def.Type
       str := r.FindString(data.(string))
       if len(str) > 0 {
-        l = append(l, []string{t, str})
+        s = append(s, []string{t, str})
         data = data.(string)[len(str):]
         break
       }
     }
   }
 
-  return nil, l
+  return nil, s
 }
 
-func (l Lexer) ReadFile(filename string) (error, Lexer) {
+func (s Scanner) ReadFile(filename string) (error, Scanner) {
   data, err := ioutil.ReadFile(filename)
   if err != nil {
     return err, nil
   }
 
-  return l.Parse(data)
+  return s.Parse(data)
 }

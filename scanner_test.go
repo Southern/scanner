@@ -1,16 +1,16 @@
-package lexer_test
+package scanner_test
 
 import (
-  "github.com/Southern/lexer"
+  "github.com/Southern/scanner"
   "io/ioutil"
   "os"
   "strings"
   "testing"
 )
 
-var l = make(lexer.Lexer, 0)
+var s = make(scanner.Scanner, 0)
 
-func TestLexerReadFile(t *testing.T) {
+func TestScannerReadFile(t *testing.T) {
   Status("Getting current working directory")
   cd, err := os.Getwd()
 
@@ -32,15 +32,15 @@ func TestLexerReadFile(t *testing.T) {
     file := strings.Join([]string{cd, "testdata", files[0].Name()}, "/")
     Status("Lexing file: %s", file)
 
-    err, l = l.ReadFile(file)
-    Status("Lexed: %+v", l)
+    err, s = s.ReadFile(file)
+    Status("Lexed: %+v", s)
     files = files[1:]
   }
 }
 
-func TestLexerNonexistentFile(t *testing.T) {
+func TestScannerNonexistentFile(t *testing.T) {
   Status("Trying to read nonexistent file")
-  err, d := l.ReadFile("idontevenexist")
+  err, d := s.ReadFile("idontevenexist")
 
   if len(d) > 0 || err == nil {
     t.Errorf("Expected this test to fail.")
@@ -56,7 +56,7 @@ func TestJoiningLexBackToString(t *testing.T) {
     return
   }
 
-  err, data := l.ReadFile(strings.Join([]string{cd, "testdata", "html.txt"}, "/"))
+  err, data := s.ReadFile(strings.Join([]string{cd, "testdata", "html.txt"}, "/"))
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -73,7 +73,7 @@ func TestJoiningLexBackToString(t *testing.T) {
 func TestInvalidDataType(t *testing.T) {
   Status("Trying to parse an invalid data type")
 
-  err, _ := l.Parse([]int{1, 2, 3, 4})
+  err, _ := s.Parse([]int{1, 2, 3, 4})
 
   Status("Error returned: %s", err)
 
@@ -82,11 +82,11 @@ func TestInvalidDataType(t *testing.T) {
   }
 }
 
-func TestLexerString(t *testing.T) {
+func TestScannerString(t *testing.T) {
   str := "ZoMg Ω≈∂œ™£¢˜Ωπππ¬˜£™¡¢∞•ªº < > & ; ?"
   Status("Trying to parse a string")
 
-  err, l := l.Parse(str)
+  err, s := s.Parse(str)
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -95,7 +95,7 @@ func TestLexerString(t *testing.T) {
 
   Status("String was parsed. Joining back together and checking the result.")
 
-  joined := l.Join()
+  joined := s.Join()
 
   if joined != str {
     t.Errorf("The joined string was not the same as what was input.")

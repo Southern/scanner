@@ -10,4 +10,4 @@ script:
   - go test -v -covermode=count -coverprofile=coverage.out
   - $(go env GOPATH | awk 'BEGIN{FS=":"} {print $1}')/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
 env:
-  secure: XmyxSHjjVfmVXJDB3IdcJ/7PrW3dyyJnKn03osG3W/RJRgNYWvEkHDcqnFvH4fN2EpaRQwhfqSxQOjF0Y4GH3Z+aIaWMN/LJqeK75A8a0Tjuwqc7NLPyWq6llh/ug/t0UPsj5GoISJPoqwXkMJ3QlY2oxJmbgIjMselnVzweJic=
+  secure: My+X66an/earb2cRCHq9G4kiwrk7TAc0MFr5RjqVNy9E+AKHE6W46FL99LfrMeJ/jZeZwlp1rbrBcFcL5BhZa1G6nGfrpTB7tgB++0Od/p3/4dZni7A9sCy9chDcsYfCd5RRQMdAEiEZ2Bkt6C60eBuCkZMAUJiN4RZXHnh2vEw=

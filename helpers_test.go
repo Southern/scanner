@@ -1,4 +1,4 @@
-package lexer_test
+package scanner_test
 
 import (
   "fmt"
