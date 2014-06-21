@@ -49,21 +49,21 @@ type Scanner [][]string
         return
       }
 
-      err, data := l.ReadFile(strings.Join([]string{cd, "testdata", "html.txt"}, "/"))
+      err, data := s.ReadFile(strings.Join([]string{cd, "testdata", "html.txt"}, "/"))
 
       if err != nil {
         t.Errorf("Unexpected error: %s", err)
         return
       }
 
-      Status("Lexed data: %+v", data)
+      Status("Scanned data: %+v", data)
 
       joined := data.Join()
 
       Status("Joined data: %+v", joined)
     }
 
-  This will allow you to do whatever you want with your lexed data, and then
+  This will allow you to do whatever you want with your scanned data, and then
   simply join it back.
 
 */
