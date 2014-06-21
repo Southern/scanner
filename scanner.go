@@ -1,7 +1,7 @@
 /*
 
   Scanner that will break down every character, word, whitespace, and number
-  that is in a file.
+  that is passed into it.
 
 */
 package scanner
