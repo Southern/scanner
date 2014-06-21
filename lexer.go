@@ -10,7 +10,6 @@ import (
   "fmt"
   "io/ioutil"
   "regexp"
-  // "strings"
 )
 
 // Lexer definitions that are added to LexerMap
