@@ -54,6 +54,12 @@ func TestScannerReadFile(t *testing.T) {
     Status("Scanning file: %s", file)
 
     err, s = s.ReadFile(file)
+
+    if err != nil {
+      t.Errorf("Unexpected error: %s", err)
+      return
+    }
+
     Status("Scanned: %+v", s)
     files = files[1:]
   }
