@@ -4,8 +4,6 @@
 
 [Documentation](https://godoc.org/github.com/Southern/scanner)
 
-This is a work in progress. More documentation, examples, and etc. will be added shortly.
-
 ## License
 Copyright (c) 2014 Colton Baker
 
