@@ -7,7 +7,7 @@ import (
   "testing"
 )
 
-var s = make(scanner.Scanner, 0)
+var s scanner.Scanner
 
 func TestScannerManipulation(t *testing.T) {
   str := "test test test"
