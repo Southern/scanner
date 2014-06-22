@@ -65,9 +65,9 @@ func TestInvalidDataType(t *testing.T) {
   }
 }
 
-func TestScannerString(t *testing.T) {
-  str := "ZoMg Ω≈∂œ™£¢˜Ωπππ¬˜£™¡¢∞•ªº < > & ; ?"
-  Status("Trying to parse a string")
+func TestScannerRandomString(t *testing.T) {
+  str := "ZoMg testΩ≈∂œ™£¢˜Ωπππ¬˜£™¡¢∞•ªº test< > & ; ?"
+  Status("Trying to parse random string")
 
   err, s := s.Parse(str)
 
@@ -76,11 +76,91 @@ func TestScannerString(t *testing.T) {
     return
   }
 
+  Status("Scanned: %+v", s)
+
   Status("String was parsed. Joining back together and checking the result.")
 
   joined := s.Join()
 
   if joined != str {
     t.Errorf("The joined string was not the same as what was input.")
+    return
   }
+
+  Status("String parsed correctly.")
+}
+
+func TestScannerRussianString(t *testing.T) {
+  str := "This isn't Russian, but this is: ру́сский язы́к"
+  Status("Trying to parse Russian string")
+
+  err, s := s.Parse(str)
+
+  if err != nil {
+    t.Errorf("Unexpected error: %s", err)
+    return
+  }
+
+  Status("Scanned: %+v", s)
+
+  Status("String was parsed. Joining back together and checking the result.")
+
+  joined := s.Join()
+
+  if joined != str {
+    t.Errorf("The joined string was not the same as what was input.")
+    return
+  }
+
+  Status("String parsed correctly.")
+}
+
+func TestScannerGreekString(t *testing.T) {
+  str := "This isn't Greek, but this is: ελληνικά"
+  Status("Trying to parse Greek string")
+
+  err, s := s.Parse(str)
+
+  if err != nil {
+    t.Errorf("Unexpected error: %s", err)
+    return
+  }
+
+  Status("Scanned: %+v", s)
+
+  Status("String was parsed. Joining back together and checking the result.")
+
+  joined := s.Join()
+
+  if joined != str {
+    t.Errorf("The joined string was not the same as what was input.")
+    return
+  }
+
+  Status("String parsed correctly")
+}
+
+func TestScannerArabicString(t *testing.T) {
+  str := "This isn't Arabic, but this is: عربي ,عربى"
+  Status("Trying to parse Arabic string")
+
+  err, s := s.Parse(str)
+
+  if err != nil {
+    t.Errorf("Unexpected error: %s", err)
+    return
+  }
+
+  Status("Scanned: %+v", s)
+
+  Status("String was parsed. Joining back together and checking the result.")
+
+  joined := s.Join()
+
+  if joined != str {
+    t.Errorf("The joined string was not the same as what was input.")
+    return
+  }
+
+  Status("String parsed correctly")
 }
