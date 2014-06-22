@@ -9,6 +9,36 @@ import (
 
 var s = make(scanner.Scanner, 0)
 
+func TestScannerManipulation(t *testing.T) {
+  str := "test test test"
+  expects := [][]string{
+    []string{"WORD", "test"},
+    []string{"WHITESPACE", " "},
+    []string{"WORD", "test2"},
+    []string{"WHITESPACE", " "},
+    []string{"WORD", "test"},
+  }
+
+  Status("Parsing \"%s\"", str)
+  err, s := s.Parse(str)
+
+  if err != nil {
+    t.Errorf("Unexpected error: %s", err)
+    return
+  }
+
+  Status("Parsed data: %+v\n", s)
+  s[2][1] = "test2"
+  for i := 0; i < len(s); i++ {
+    if s[i][0] != expects[i][0] || s[i][1] != expects[i][1] {
+      t.Errorf("Manipulation failed.")
+      return
+    }
+  }
+
+  Status("Data after manipulation: %s", s.Join())
+}
+
 func TestScannerReadFile(t *testing.T) {
   Status("Reading all files in testdata directory")
   files, err := ioutil.ReadDir("testdata")

@@ -469,6 +469,46 @@ func (s Scanner) Join() string {
   return joined
 }
 
+/*
+
+  Parse []byte or string into their most basic forms. "WORD", "CHAR",
+  "NUMBER", and "WHITESPACE".
+
+  Once the data is parsed, you can manipulate the data and completely change
+  the original data.
+
+  For instance, taking a look at our test for this:
+    func TestScannerManipulation(t *testing.T) {
+      str := "test test test"
+      expects := [][]string{
+        []string{"WORD", "test"},
+        []string{"WHITESPACE", " "},
+        []string{"WORD", "test2"},
+        []string{"WHITESPACE", " "},
+        []string{"WORD", "test"},
+      }
+
+      Status("Parsing \"%s\"", str)
+      err, s := s.Parse(str)
+
+      if err != nil {
+        t.Errorf("Unexpected error: %s", err)
+        return
+      }
+
+      Status("Parsed data: %+v\n", s)
+      s[2][1] = "test2"
+      for i := 0; i < len(s); i++ {
+        if s[i][0] != expects[i][0] || s[i][1] != expects[i][1] {
+          t.Errorf("Manipulation failed.")
+          return
+        }
+      }
+
+      Status("Data after manipulation: %s", s.Join())
+    }
+
+*/
 func (s Scanner) Parse(data interface{}) (error, Scanner) {
   s = make([][]string, 0)
 
@@ -496,6 +536,12 @@ func (s Scanner) Parse(data interface{}) (error, Scanner) {
   return nil, s
 }
 
+/*
+
+  Reads a file and automatically runs it through Parse, returning the parsed
+  results of the file that was read.
+
+*/
 func (s Scanner) ReadFile(filename string) (error, Scanner) {
   data, err := ioutil.ReadFile(filename)
   if err != nil {
