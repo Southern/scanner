@@ -26,7 +26,7 @@ type ScannerDefinition struct {
 
   A simple way to grab all UTF-16 blocks, in case these ever get deleted for
   some reason, is to use:
-    curl http://jrgraphix.net/research/unicode_blocks.php | \
+    curl -s http://jrgraphix.net/research/unicode_blocks.php | \
     grep -iE "[a-f0-9]{4,} — [a-f0-9]{4,}" | \
     awk '{gsub("&nbsp;", " ", $0); gsub(/ {2,}/, "\n", $0); print $0}' | \
     awk '/<tr>/ {next} {FS="[<>\"]"; split(substr($7, 12), range, "-"); if (length($9) == 0) next; else printf "  // %s\n  \"\\\\x{%s}-\\\\x{%s}\",\n\n", $9, range[1], range[2]}'
@@ -540,6 +540,27 @@ func (s Scanner) Parse(data interface{}) (error, Scanner) {
 
   Reads a file and automatically runs it through Parse, returning the parsed
   results of the file that was read.
+
+  For an example, let's take a look at the test reading our testdata directory:
+    func TestScannerReadFile(t *testing.T) {
+      Status("Reading all files in testdata directory")
+      files, err := ioutil.ReadDir("testdata")
+
+      if err != nil {
+        t.Errorf("Unexpected error: %s", err)
+        return
+      }
+
+      Status("Scanning all files found in testdata directory")
+      for len(files) > 0 {
+        file := strings.Join([]string{"testdata", files[0].Name()}, "/")
+        Status("Scanning file: %s", file)
+
+        err, s = s.ReadFile(file)
+        Status("Scanned: %+v", s)
+        files = files[1:]
+      }
+    }
 
 */
 func (s Scanner) ReadFile(filename string) (error, Scanner) {
