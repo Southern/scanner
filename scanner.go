@@ -423,7 +423,33 @@ var ScannerMap = []ScannerDefinition{
   ScannerDefinition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
 }
 
-// Scanner is just a double array of strings.
+/*
+
+  Scanner is just a double array of strings.
+
+  To create a new scanner, all you have to do is declare the variable.
+
+  For example:
+    var parser scanner.Scanner
+    err, parser := parser.Parse("my text")
+
+    if err != nil {
+      // Handle the error
+      return
+    }
+
+    for i := 0; i < len(parser); i++ {
+      fmt.Printf("Type: %s, Value: \"%s\"\n", parser[i][0], parser[i][1])
+    }
+
+  You could also use:
+    err, _ := parser.Parse("my text")
+
+  This is because the parser just returns itself. This way you can send your
+  parsed data to another variable. The parser itself will still contain the
+  data, even though you are using _ to drop the return.
+
+*/
 type Scanner [][]string
 
 /*
