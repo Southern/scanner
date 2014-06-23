@@ -7,7 +7,7 @@ import (
   "testing"
 )
 
-var s scanner.Scanner
+var s = scanner.New()
 
 func TestScannerManipulation(t *testing.T) {
   str := "test test test"
@@ -28,9 +28,9 @@ func TestScannerManipulation(t *testing.T) {
   }
 
   Status("Parsed data: %+v\n", s)
-  s[2][1] = "test2"
-  for i := 0; i < len(s); i++ {
-    if s[i][0] != expects[i][0] || s[i][1] != expects[i][1] {
+  s.Tokens[2][1] = "test2"
+  for i := 0; i < len(s.Tokens); i++ {
+    if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
       t.Errorf("Manipulation failed.")
       return
     }
@@ -66,10 +66,13 @@ func TestScannerReadFile(t *testing.T) {
 }
 
 func TestScannerNonexistentFile(t *testing.T) {
+  s := scanner.New()
   Status("Trying to read nonexistent file")
-  err, d := s.ReadFile("idontevenexist")
+  err, s := s.ReadFile("idontevenexist")
 
-  if len(d) > 0 || err == nil {
+  Status("Scan: %+v\n", s)
+
+  if len(s.Tokens) > 0 || err == nil {
     t.Errorf("Expected this test to fail.")
   }
 }

@@ -13,8 +13,8 @@ import (
   "strings"
 )
 
-// Scanner definitions that are added to ScannerMap
-type ScannerDefinition struct {
+// Scanner definitions that are added to Map
+type Definition struct {
   Regex *regexp.Regexp
   Type  string
 }
@@ -406,31 +406,39 @@ func unicode() string {
 
 /*
 
-ScannerMap holds the regexes that we are wanting to match throughout the
-file. It also contains the type that we want to return if the regex is
-matched.
+  Map holds the regexes that we are wanting to match throughout the
+  file. It also contains the type that we want to return if the regex is
+  matched.
 
 */
-var ScannerMap = []ScannerDefinition{
-  ScannerDefinition{regexp.MustCompile(
+var Map = []Definition{
+  Definition{regexp.MustCompile(
     fmt.Sprintf("^(?i)([a-z0-9][a-z0-9\\-'%s]+|[%s]{2,})",
       unicode(), unicode()),
   ), "WORD"},
-  ScannerDefinition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
-  ScannerDefinition{regexp.MustCompile(
+  Definition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
+  Definition{regexp.MustCompile(
     "^(?i)([a-z]|[^0-9])",
   ), "CHAR"},
-  ScannerDefinition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
+  Definition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
 }
 
 /*
 
-  Scanner is just a double array of strings.
+  Scanner is the main struct and contains all of the methods for parsing, etc.
 
-  To create a new scanner, all you have to do is declare the variable.
+*/
+type Scanner struct {
+  Tokens [][]string
+  Map    []Definition
+}
+
+/*
+
+  Create a new scanner instance.
 
   For example:
-    var parser scanner.Scanner
+    var parser = scanner.New()
     err, parser := parser.Parse("my text")
 
     if err != nil {
@@ -438,12 +446,16 @@ var ScannerMap = []ScannerDefinition{
       return
     }
 
-    for i := 0; i < len(parser); i++ {
-      fmt.Printf("Type: %s, Value: \"%s\"\n", parser[i][0], parser[i][1])
+    for i := 0; i < len(parser.Tokens); i++ {
+      fmt.Printf("Type: %s, Value: \"%s\"\n", parser.Tokens[i][0], parser.Tokens[i][1])
     }
 
 */
-type Scanner [][]string
+func New() Scanner {
+  return Scanner{
+    Map: Map,
+  }
+}
 
 /*
 
@@ -451,15 +463,7 @@ type Scanner [][]string
 
   For an example, let's look at the test for this function:
     func TestJoiningLexBackToString(t *testing.T) {
-      Status("Getting current working directory")
-      cd, err := os.Getwd()
-
-      if err != nil {
-        panic("Could not get working directory")
-        return
-      }
-
-      err, data := s.ReadFile(strings.Join([]string{cd, "testdata", "html.txt"}, "/"))
+      err, data := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
 
       if err != nil {
         t.Errorf("Unexpected error: %s", err)
@@ -480,9 +484,9 @@ type Scanner [][]string
 func (s Scanner) Join() string {
   var joined string
 
-  for len(s) > 0 {
-    joined = joined + s[0][1]
-    s = s[1:]
+  for len(s.Tokens) > 0 {
+    joined = joined + s.Tokens[0][1]
+    s.Tokens = s.Tokens[1:]
   }
 
   return joined
@@ -516,9 +520,9 @@ func (s Scanner) Join() string {
       }
 
       Status("Parsed data: %+v\n", s)
-      s[2][1] = "test2"
-      for i := 0; i < len(s); i++ {
-        if s[i][0] != expects[i][0] || s[i][1] != expects[i][1] {
+      s.Tokens[2][1] = "test2"
+      for i := 0; i < len(s.Tokens); i++ {
+        if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
           t.Errorf("Manipulation failed.")
           return
         }
@@ -529,7 +533,7 @@ func (s Scanner) Join() string {
 
 */
 func (s Scanner) Parse(data interface{}) (error, Scanner) {
-  s = make([][]string, 0)
+  s.Tokens = make([][]string, 0)
 
   switch data.(type) {
   case []byte:
@@ -541,11 +545,11 @@ func (s Scanner) Parse(data interface{}) (error, Scanner) {
   }
 
   for len(data.(string)) > 0 {
-    for _, def := range ScannerMap {
+    for _, def := range s.Map {
       r, t := def.Regex, def.Type
       str := r.FindString(data.(string))
       if len(str) > 0 {
-        s = append(s, []string{t, str})
+        s.Tokens = append(s.Tokens, []string{t, str})
         data = data.(string)[len(str):]
         break
       }
@@ -591,7 +595,7 @@ func (s Scanner) Parse(data interface{}) (error, Scanner) {
 func (s Scanner) ReadFile(filename string) (error, Scanner) {
   data, err := ioutil.ReadFile(filename)
   if err != nil {
-    return err, nil
+    return err, s
   }
 
   return s.Parse(data)
