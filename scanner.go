@@ -413,7 +413,7 @@ matched.
 */
 var ScannerMap = []ScannerDefinition{
   ScannerDefinition{regexp.MustCompile(
-    fmt.Sprintf("^(?i)([a-z0-9][a-z0-9\\-'%s]+|[%s]+)",
+    fmt.Sprintf("^(?i)([a-z0-9][a-z0-9\\-'%s]+|[%s]{2,})",
       unicode(), unicode()),
   ), "WORD"},
   ScannerDefinition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
