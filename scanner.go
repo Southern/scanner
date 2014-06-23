@@ -442,13 +442,6 @@ var ScannerMap = []ScannerDefinition{
       fmt.Printf("Type: %s, Value: \"%s\"\n", parser[i][0], parser[i][1])
     }
 
-  You could also use:
-    err, _ := parser.Parse("my text")
-
-  This is because the parser just returns itself. This way you can send your
-  parsed data to another variable. The parser itself will still contain the
-  data, even though you are using _ to drop the return.
-
 */
 type Scanner [][]string
 
