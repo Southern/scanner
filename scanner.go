@@ -406,21 +406,27 @@ func unicode() string {
 
 /*
 
-  Map holds the regexes that we are wanting to match throughout the
+  Map holds the default regexes that we are wanting to match throughout the
   file. It also contains the type that we want to return if the regex is
   matched.
 
+  Map can also be used to reset Map in a scanner instance. For example:
+    s := scanner.New()
+    s.Map = scanner.Map()
+
 */
-var Map = []Definition{
-  Definition{regexp.MustCompile(
-    fmt.Sprintf("^(?i)([a-z0-9][a-z0-9\\-'%s]+|[%s]{2,})",
-      unicode(), unicode()),
-  ), "WORD"},
-  Definition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
-  Definition{regexp.MustCompile(
-    "^(?i)([a-z]|[^0-9])",
-  ), "CHAR"},
-  Definition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
+func Map() []Definition {
+  return []Definition{
+    Definition{regexp.MustCompile(
+      fmt.Sprintf("^(?i)([a-z0-9][a-z0-9\\-'%s]+|[%s]{2,})",
+        unicode(), unicode()),
+    ), "WORD"},
+    Definition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
+    Definition{regexp.MustCompile(
+      "^(?i)([a-z]|[^0-9])",
+    ), "CHAR"},
+    Definition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
+  }
 }
 
 /*
@@ -453,7 +459,7 @@ type Scanner struct {
 */
 func New() Scanner {
   return Scanner{
-    Map: Map,
+    Map: Map(),
   }
 }
 
