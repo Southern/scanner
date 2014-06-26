@@ -1,7 +1,7 @@
 /*
 
-  Scanner that will break down every character, word, whitespace, and number
-  that is passed into it.
+Package scanner is a UTF-16 compatible scanner that will break down every
+character, word, whitespace, and number that is passed into it.
 
 */
 package scanner
@@ -13,7 +13,12 @@ import (
   "strings"
 )
 
-// Scanner definitions that are added to Map
+/*
+
+Definition is a struct that is used to define Scanner definitions that are
+added to Scanner Map.
+
+*/
 type Definition struct {
   Regex *regexp.Regexp
   Type  string
@@ -21,18 +26,19 @@ type Definition struct {
 
 /*
 
-  Accepted Unicode characters. This is exposed so that you, the end user, may
-  add your own if the need arises.
+Unicode is an array of strings that will be accepted as Unicode characters.
+This is exposed so that you, the end user, may add your own if the need
+arises.
 
-  A simple way to grab all UTF-16 blocks, in case these ever get deleted for
-  some reason, is to use:
-    curl -s http://jrgraphix.net/research/unicode_blocks.php | \
-    grep -iE "[a-f0-9]{4,} — [a-f0-9]{4,}" | \
-    awk '{gsub("&nbsp;", " ", $0); gsub(/ {2,}/, "\n", $0); print $0}' | \
-    awk '/<tr>/ {next} {FS="[<>\"]"; split(substr($7, 12), range, "-"); if (length($9) == 0) next; else printf "  // %s\n  \"\\\\x{%s}-\\\\x{%s}\",\n\n", $9, range[1], range[2]}'
+A simple way to grab all UTF-16 blocks, in case these ever get deleted for
+some reason, is to use:
+  curl -s http://jrgraphix.net/research/unicode_blocks.php | \
+  grep -iE "[a-f0-9]{4,} — [a-f0-9]{4,}" | \
+  awk '{gsub("&nbsp;", " ", $0); gsub(/ {2,}/, "\n", $0); print $0}' | \
+  awk '/<tr>/ {next} {FS="[<>\"]"; split(substr($7, 12), range, "-"); if (length($9) == 0) next; else printf "  // %s\n  \"\\\\x{%s}-\\\\x{%s}\",\n\n", $9, range[1], range[2]}'
 
-  Then you can just copy it to your clipboard with another pipe and paste it
-  here. Simple as that.
+Then you can just copy it to your clipboard with another pipe and paste it
+here. Simple as that.
 
 */
 var Unicode = []string{
@@ -406,13 +412,13 @@ func unicode() string {
 
 /*
 
-  Map holds the default regexes that we are wanting to match throughout the
-  file. It also contains the type that we want to return if the regex is
-  matched.
+Map holds the default regexes that we are wanting to match throughout the
+file. It also contains the type that we want to return if the regex is
+matched.
 
-  Map can also be used to reset Map in a scanner instance. For example:
-    s := scanner.New()
-    s.Map = scanner.Map()
+Map can also be used to reset Map in a scanner instance. For example:
+  s := scanner.New()
+  s.Map = scanner.Map()
 
 */
 func Map() []Definition {
@@ -431,7 +437,7 @@ func Map() []Definition {
 
 /*
 
-  Scanner is the main struct and contains all of the methods for parsing, etc.
+Scanner is the main struct and contains all of the methods for parsing, etc.
 
 */
 type Scanner struct {
@@ -441,20 +447,20 @@ type Scanner struct {
 
 /*
 
-  Create a new scanner instance.
+New creates a new scanner instance.
 
-  For example:
-    var parser = scanner.New()
-    err, parser := parser.Parse("my text")
+For example:
+  var parser = scanner.New()
+  err, parser := parser.Parse("my text")
 
-    if err != nil {
-      // Handle the error
-      return
-    }
+  if err != nil {
+    // Handle the error
+    return
+  }
 
-    for i := 0; i < len(parser.Tokens); i++ {
-      fmt.Printf("Type: %s, Value: \"%s\"\n", parser.Tokens[i][0], parser.Tokens[i][1])
-    }
+  for i := 0; i < len(parser.Tokens); i++ {
+    fmt.Printf("Type: %s, Value: \"%s\"\n", parser.Tokens[i][0], parser.Tokens[i][1])
+  }
 
 */
 func New() Scanner {
@@ -465,26 +471,26 @@ func New() Scanner {
 
 /*
 
-  Join data back together once it has been lexed, if it is desired.
+Join data back together once it has been lexed, if it is desired.
 
-  For an example, let's look at the test for this function:
-    func TestJoiningLexBackToString(t *testing.T) {
-      err, data := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
+For an example, let's look at the test for this function:
+  func TestJoiningLexBackToString(t *testing.T) {
+    err, data := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
 
-      if err != nil {
-        t.Errorf("Unexpected error: %s", err)
-        return
-      }
-
-      Status("Scanned data: %+v", data)
-
-      joined := data.Join()
-
-      Status("Joined data: %+v", joined)
+    if err != nil {
+      t.Errorf("Unexpected error: %s", err)
+      return
     }
 
-  This will allow you to do whatever you want with your scanned data, and then
-  simply join it back.
+    Status("Scanned data: %+v", data)
+
+    joined := data.Join()
+
+    Status("Joined data: %+v", joined)
+  }
+
+This will allow you to do whatever you want with your scanned data, and then
+simply join it back.
 
 */
 func (s Scanner) Join() string {
@@ -500,42 +506,42 @@ func (s Scanner) Join() string {
 
 /*
 
-  Parse []byte or string into their most basic forms. "WORD", "CHAR",
-  "NUMBER", and "WHITESPACE".
+Parse []byte or string into their most basic forms. "WORD", "CHAR",
+"NUMBER", and "WHITESPACE".
 
-  Once the data is parsed, you can manipulate the data and completely change
-  the original data.
+Once the data is parsed, you can manipulate the data and completely change
+the original data.
 
-  For instance, taking a look at our test for this:
-    func TestScannerManipulation(t *testing.T) {
-      str := "test test test"
-      expects := [][]string{
-        []string{"WORD", "test"},
-        []string{"WHITESPACE", " "},
-        []string{"WORD", "test2"},
-        []string{"WHITESPACE", " "},
-        []string{"WORD", "test"},
-      }
+For instance, taking a look at our test for this:
+  func TestScannerManipulation(t *testing.T) {
+    str := "test test test"
+    expects := [][]string{
+      []string{"WORD", "test"},
+      []string{"WHITESPACE", " "},
+      []string{"WORD", "test2"},
+      []string{"WHITESPACE", " "},
+      []string{"WORD", "test"},
+    }
 
-      Status("Parsing \"%s\"", str)
-      err, s := s.Parse(str)
+    Status("Parsing \"%s\"", str)
+    err, s := s.Parse(str)
 
-      if err != nil {
-        t.Errorf("Unexpected error: %s", err)
+    if err != nil {
+      t.Errorf("Unexpected error: %s", err)
+      return
+    }
+
+    Status("Parsed data: %+v\n", s)
+    s.Tokens[2][1] = "test2"
+    for i := 0; i < len(s.Tokens); i++ {
+      if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
+        t.Errorf("Manipulation failed.")
         return
       }
-
-      Status("Parsed data: %+v\n", s)
-      s.Tokens[2][1] = "test2"
-      for i := 0; i < len(s.Tokens); i++ {
-        if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
-          t.Errorf("Manipulation failed.")
-          return
-        }
-      }
-
-      Status("Data after manipulation: %s", s.Join())
     }
+
+    Status("Data after manipulation: %s", s.Join())
+  }
 
 */
 func (s Scanner) Parse(data interface{}) (error, Scanner) {
@@ -567,35 +573,35 @@ func (s Scanner) Parse(data interface{}) (error, Scanner) {
 
 /*
 
-  Reads a file and automatically runs it through Parse, returning the parsed
-  results of the file that was read.
+ReadFile reads a file and automatically runs it through Parse, returning the
+parsed results of the file that was read.
 
-  For an example, let's take a look at the test reading our testdata directory:
-    func TestScannerReadFile(t *testing.T) {
-      Status("Reading all files in testdata directory")
-      files, err := ioutil.ReadDir("testdata")
+For an example, let's take a look at the test reading our testdata directory:
+  func TestScannerReadFile(t *testing.T) {
+    Status("Reading all files in testdata directory")
+    files, err := ioutil.ReadDir("testdata")
+
+    if err != nil {
+      t.Errorf("Unexpected error: %s", err)
+      return
+    }
+
+    Status("Scanning all files found in testdata directory")
+    for len(files) > 0 {
+      file := strings.Join([]string{"testdata", files[0].Name()}, "/")
+      Status("Scanning file: %s", file)
+
+      err, s = s.ReadFile(file)
 
       if err != nil {
         t.Errorf("Unexpected error: %s", err)
         return
       }
 
-      Status("Scanning all files found in testdata directory")
-      for len(files) > 0 {
-        file := strings.Join([]string{"testdata", files[0].Name()}, "/")
-        Status("Scanning file: %s", file)
-
-        err, s = s.ReadFile(file)
-
-        if err != nil {
-          t.Errorf("Unexpected error: %s", err)
-          return
-        }
-
-        Status("Scanned: %+v", s)
-        files = files[1:]
-      }
+      Status("Scanned: %+v", s)
+      files = files[1:]
     }
+  }
 
 */
 func (s Scanner) ReadFile(filename string) (error, Scanner) {
