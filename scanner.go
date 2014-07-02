@@ -431,7 +431,7 @@ func Map() []Definition {
     Definition{regexp.MustCompile(
       "^(?i)([a-z]|[^0-9])",
     ), "CHAR"},
-    Definition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
+    Definition{regexp.MustCompile("^[+\\-]?[0-9]+"), "NUMBER"},
   }
 }
 
