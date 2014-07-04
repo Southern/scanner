@@ -9,6 +9,50 @@ import (
 
 var s = scanner.New()
 
+func TestScannerBasics(t *testing.T) {
+  str := "test-1 test + 1 test+1 -1 1000 -1000"
+  expects := [][]string{
+    []string{"WORD", "test"},
+    []string{"CHAR", "-"},
+    []string{"NUMBER", "1"},
+    []string{"WHITESPACE", " "},
+    []string{"WORD", "test"},
+    []string{"WHITESPACE", " "},
+    []string{"CHAR", "+"},
+    []string{"WHITESPACE", " "},
+    []string{"NUMBER", "1"},
+    []string{"WHITESPACE", " "},
+    []string{"WORD", "test"},
+    []string{"CHAR", "+"},
+    []string{"NUMBER", "1"},
+    []string{"WHITESPACE", " "},
+    []string{"CHAR", "-"},
+    []string{"NUMBER", "1"},
+    []string{"WHITESPACE", " "},
+    []string{"NUMBER", "1000"},
+    []string{"WHITESPACE", " "},
+    []string{"CHAR", "-"},
+    []string{"NUMBER", "1000"},
+  }
+  Status("Parsing \"%s\"", str)
+
+  err, s := s.Parse(str)
+
+  if err != nil {
+    t.Errorf("Unexpected error: %s", err)
+    return
+  }
+
+  for i := 0; i < len(s.Tokens); i++ {
+    if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
+      t.Errorf("Expected %+v, got %+v", expects[i], s.Tokens[i])
+      return
+    }
+  }
+
+  Status("Parsed: %s", s)
+}
+
 func TestScannerManipulation(t *testing.T) {
   str := "test test test"
   expects := [][]string{
@@ -31,7 +75,7 @@ func TestScannerManipulation(t *testing.T) {
   s.Tokens[2][1] = "test2"
   for i := 0; i < len(s.Tokens); i++ {
     if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
-      t.Errorf("Manipulation failed.")
+      t.Errorf("Expected %+v, got %+v", expects[i], s.Tokens[i])
       return
     }
   }
