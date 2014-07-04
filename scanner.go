@@ -423,15 +423,15 @@ Map can also be used to reset Map in a scanner instance. For example:
 */
 func Map() []Definition {
   return []Definition{
+    Definition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
     Definition{regexp.MustCompile(
-      fmt.Sprintf("^(?i)([a-z0-9][a-z0-9\\-'%s]+|[%s]{2,})",
+      fmt.Sprintf("^(?i)([a-z0-9][a-z0-9'%s]+|[%s]{2,})",
         unicode(), unicode()),
     ), "WORD"},
     Definition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
     Definition{regexp.MustCompile(
       "^(?i)([a-z]|[^0-9])",
     ), "CHAR"},
-    Definition{regexp.MustCompile("^[+\\-]?[0-9]+"), "NUMBER"},
   }
 }
 
