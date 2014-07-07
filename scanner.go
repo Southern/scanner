@@ -544,7 +544,7 @@ For instance, taking a look at our test for this:
   }
 
 */
-func (s Scanner) Parse(data interface{}) (error, Scanner) {
+func (s Scanner) Parse(data interface{}) (Scanner, error) {
   s.Tokens = make([][]string, 0)
 
   switch data.(type) {
@@ -553,7 +553,7 @@ func (s Scanner) Parse(data interface{}) (error, Scanner) {
   case string:
     data = data.(string)
   default:
-    return fmt.Errorf("Scanner.Parse only accepts []byte and string types."), s
+    return s, fmt.Errorf("Scanner.Parse only accepts []byte and string types.")
   }
 
   for len(data.(string)) > 0 {
@@ -568,7 +568,7 @@ func (s Scanner) Parse(data interface{}) (error, Scanner) {
     }
   }
 
-  return nil, s
+  return s, nil
 }
 
 /*
@@ -604,10 +604,10 @@ For an example, let's take a look at the test reading our testdata directory:
   }
 
 */
-func (s Scanner) ReadFile(filename string) (error, Scanner) {
+func (s Scanner) ReadFile(filename string) (Scanner, error) {
   data, err := ioutil.ReadFile(filename)
   if err != nil {
-    return err, s
+    return s, err
   }
 
   return s.Parse(data)

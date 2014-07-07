@@ -36,7 +36,7 @@ func TestScannerBasics(t *testing.T) {
   }
   Status("Parsing \"%s\"", str)
 
-  err, s := s.Parse(str)
+  s, err := s.Parse(str)
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -64,7 +64,7 @@ func TestScannerManipulation(t *testing.T) {
   }
 
   Status("Parsing \"%s\"", str)
-  err, s := s.Parse(str)
+  s, err := s.Parse(str)
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -97,7 +97,7 @@ func TestScannerReadFile(t *testing.T) {
     file := strings.Join([]string{"testdata", files[0].Name()}, "/")
     Status("Scanning file: %s", file)
 
-    err, s = s.ReadFile(file)
+    s, err = s.ReadFile(file)
 
     if err != nil {
       t.Errorf("Unexpected error: %s", err)
@@ -112,7 +112,7 @@ func TestScannerReadFile(t *testing.T) {
 func TestScannerNonexistentFile(t *testing.T) {
   s := scanner.New()
   Status("Trying to read nonexistent file")
-  err, s := s.ReadFile("idontevenexist")
+  s, err := s.ReadFile("idontevenexist")
 
   Status("Scan: %+v\n", s)
 
@@ -122,7 +122,7 @@ func TestScannerNonexistentFile(t *testing.T) {
 }
 
 func TestJoiningLexBackToString(t *testing.T) {
-  err, data := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
+  data, err := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -139,7 +139,7 @@ func TestJoiningLexBackToString(t *testing.T) {
 func TestInvalidDataType(t *testing.T) {
   Status("Trying to parse an invalid data type")
 
-  err, _ := s.Parse([]int{1, 2, 3, 4})
+  _, err := s.Parse([]int{1, 2, 3, 4})
 
   Status("Error returned: %s", err)
 
@@ -152,7 +152,7 @@ func TestScannerRandomString(t *testing.T) {
   str := "ZoMg testΩ≈∂œ™£¢˜Ωπππ¬˜£™¡¢∞•ªº test< > & ; ?"
   Status("Trying to parse random string")
 
-  err, s := s.Parse(str)
+  s, err := s.Parse(str)
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -177,7 +177,7 @@ func TestScannerRussianString(t *testing.T) {
   str := "This isn't Russian, but this is: ру́сский язы́к"
   Status("Trying to parse Russian string")
 
-  err, s := s.Parse(str)
+  s, err := s.Parse(str)
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -202,7 +202,7 @@ func TestScannerGreekString(t *testing.T) {
   str := "This isn't Greek, but this is: ελληνικά"
   Status("Trying to parse Greek string")
 
-  err, s := s.Parse(str)
+  s, err := s.Parse(str)
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
@@ -227,7 +227,7 @@ func TestScannerArabicString(t *testing.T) {
   str := "This isn't Arabic, but this is: عربي ,عربى"
   Status("Trying to parse Arabic string")
 
-  err, s := s.Parse(str)
+  s, err := s.Parse(str)
 
   if err != nil {
     t.Errorf("Unexpected error: %s", err)
