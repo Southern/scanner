@@ -451,7 +451,7 @@ New creates a new scanner instance.
 
 For example:
   var parser = scanner.New()
-  err, parser := parser.Parse("my text")
+  parser, err := parser.Parse("my text")
 
   if err != nil {
     // Handle the error
@@ -475,7 +475,7 @@ Join data back together once it has been lexed, if it is desired.
 
 For an example, let's look at the test for this function:
   func TestJoiningLexBackToString(t *testing.T) {
-    err, data := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
+    data, err := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
 
     if err != nil {
       t.Errorf("Unexpected error: %s", err)
@@ -524,7 +524,7 @@ For instance, taking a look at our test for this:
     }
 
     Status("Parsing \"%s\"", str)
-    err, s := s.Parse(str)
+    s, err := s.Parse(str)
 
     if err != nil {
       t.Errorf("Unexpected error: %s", err)
@@ -535,7 +535,7 @@ For instance, taking a look at our test for this:
     s.Tokens[2][1] = "test2"
     for i := 0; i < len(s.Tokens); i++ {
       if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
-        t.Errorf("Manipulation failed.")
+        t.Errorf("Expected %+v, got %+v", expects[i], s.Tokens[i])
         return
       }
     }
@@ -591,7 +591,7 @@ For an example, let's take a look at the test reading our testdata directory:
       file := strings.Join([]string{"testdata", files[0].Name()}, "/")
       Status("Scanning file: %s", file)
 
-      err, s = s.ReadFile(file)
+      s, err = s.ReadFile(file)
 
       if err != nil {
         t.Errorf("Unexpected error: %s", err)
