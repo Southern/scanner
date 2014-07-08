@@ -7,10 +7,10 @@ character, word, whitespace, and number that is passed into it.
 package scanner
 
 import (
-  "fmt"
-  "io/ioutil"
-  "regexp"
-  "strings"
+	"fmt"
+	"io/ioutil"
+	"regexp"
+	"strings"
 )
 
 /*
@@ -20,8 +20,8 @@ added to Scanner Map.
 
 */
 type Definition struct {
-  Regex *regexp.Regexp
-  Type  string
+	Regex *regexp.Regexp
+	Type  string
 }
 
 /*
@@ -42,372 +42,372 @@ here. Simple as that.
 
 */
 var Unicode = []string{
-  // Block Elements
-  "\\x{2580}-\\x{259F}",
+	// Block Elements
+	"\\x{2580}-\\x{259F}",
 
-  // Latin-1 Supplement
-  "\\x{00A0}-\\x{00FF}",
+	// Latin-1 Supplement
+	"\\x{00A0}-\\x{00FF}",
 
-  // Geometric Shapes
-  "\\x{25A0}-\\x{25FF}",
+	// Geometric Shapes
+	"\\x{25A0}-\\x{25FF}",
 
-  // Latin Extended-A
-  "\\x{0100}-\\x{017F}",
+	// Latin Extended-A
+	"\\x{0100}-\\x{017F}",
 
-  // Miscellaneous Symbols
-  "\\x{2600}-\\x{26FF}",
+	// Miscellaneous Symbols
+	"\\x{2600}-\\x{26FF}",
 
-  // Latin Extended-B
-  "\\x{0180}-\\x{024F}",
+	// Latin Extended-B
+	"\\x{0180}-\\x{024F}",
 
-  // Dingbats
-  "\\x{2700}-\\x{27BF}",
+	// Dingbats
+	"\\x{2700}-\\x{27BF}",
 
-  // IPA Extensions
-  "\\x{0250}-\\x{02AF}",
+	// IPA Extensions
+	"\\x{0250}-\\x{02AF}",
 
-  // Miscellaneous Mathematical Symbols-A
-  "\\x{27C0}-\\x{27EF}",
+	// Miscellaneous Mathematical Symbols-A
+	"\\x{27C0}-\\x{27EF}",
 
-  // Spacing Modifier Letters
-  "\\x{02B0}-\\x{02FF}",
+	// Spacing Modifier Letters
+	"\\x{02B0}-\\x{02FF}",
 
-  // Supplemental Arrows-A
-  "\\x{27F0}-\\x{27FF}",
+	// Supplemental Arrows-A
+	"\\x{27F0}-\\x{27FF}",
 
-  // Combining Diacritical Marks
-  "\\x{0300}-\\x{036F}",
+	// Combining Diacritical Marks
+	"\\x{0300}-\\x{036F}",
 
-  // Braille Patterns
-  "\\x{2800}-\\x{28FF}",
+	// Braille Patterns
+	"\\x{2800}-\\x{28FF}",
 
-  // Greek and Coptic
-  "\\x{0370}-\\x{03FF}",
+	// Greek and Coptic
+	"\\x{0370}-\\x{03FF}",
 
-  // Supplemental Arrows-B
-  "\\x{2900}-\\x{297F}",
+	// Supplemental Arrows-B
+	"\\x{2900}-\\x{297F}",
 
-  // Cyrillic
-  "\\x{0400}-\\x{04FF}",
+	// Cyrillic
+	"\\x{0400}-\\x{04FF}",
 
-  // Miscellaneous Mathematical Symbols-B
-  "\\x{2980}-\\x{29FF}",
+	// Miscellaneous Mathematical Symbols-B
+	"\\x{2980}-\\x{29FF}",
 
-  // Cyrillic Supplementary
-  "\\x{0500}-\\x{052F}",
+	// Cyrillic Supplementary
+	"\\x{0500}-\\x{052F}",
 
-  // Supplemental Mathematical Operators
-  "\\x{2A00}-\\x{2AFF}",
+	// Supplemental Mathematical Operators
+	"\\x{2A00}-\\x{2AFF}",
 
-  // Armenian
-  "\\x{0530}-\\x{058F}",
+	// Armenian
+	"\\x{0530}-\\x{058F}",
 
-  // Miscellaneous Symbols and Arrows
-  "\\x{2B00}-\\x{2BFF}",
+	// Miscellaneous Symbols and Arrows
+	"\\x{2B00}-\\x{2BFF}",
 
-  // Hebrew
-  "\\x{0590}-\\x{05FF}",
+	// Hebrew
+	"\\x{0590}-\\x{05FF}",
 
-  // CJK Radicals Supplement
-  "\\x{2E80}-\\x{2EFF}",
+	// CJK Radicals Supplement
+	"\\x{2E80}-\\x{2EFF}",
 
-  // Arabic
-  "\\x{0600}-\\x{06FF}",
+	// Arabic
+	"\\x{0600}-\\x{06FF}",
 
-  // Kangxi Radicals
-  "\\x{2F00}-\\x{2FDF}",
+	// Kangxi Radicals
+	"\\x{2F00}-\\x{2FDF}",
 
-  // Syriac
-  "\\x{0700}-\\x{074F}",
+	// Syriac
+	"\\x{0700}-\\x{074F}",
 
-  // Ideographic Description Characters
-  "\\x{2FF0}-\\x{2FFF}",
+	// Ideographic Description Characters
+	"\\x{2FF0}-\\x{2FFF}",
 
-  // Thaana
-  "\\x{0780}-\\x{07BF}",
+	// Thaana
+	"\\x{0780}-\\x{07BF}",
 
-  // CJK Symbols and Punctuation
-  "\\x{3000}-\\x{303F}",
+	// CJK Symbols and Punctuation
+	"\\x{3000}-\\x{303F}",
 
-  // Devanagari
-  "\\x{0900}-\\x{097F}",
+	// Devanagari
+	"\\x{0900}-\\x{097F}",
 
-  // Hiragana
-  "\\x{3040}-\\x{309F}",
+	// Hiragana
+	"\\x{3040}-\\x{309F}",
 
-  // Bengali
-  "\\x{0980}-\\x{09FF}",
+	// Bengali
+	"\\x{0980}-\\x{09FF}",
 
-  // Katakana
-  "\\x{30A0}-\\x{30FF}",
+	// Katakana
+	"\\x{30A0}-\\x{30FF}",
 
-  // Gurmukhi
-  "\\x{0A00}-\\x{0A7F}",
+	// Gurmukhi
+	"\\x{0A00}-\\x{0A7F}",
 
-  // Bopomofo
-  "\\x{3100}-\\x{312F}",
+	// Bopomofo
+	"\\x{3100}-\\x{312F}",
 
-  // Gujarati
-  "\\x{0A80}-\\x{0AFF}",
+	// Gujarati
+	"\\x{0A80}-\\x{0AFF}",
 
-  // Hangul Compatibility Jamo
-  "\\x{3130}-\\x{318F}",
+	// Hangul Compatibility Jamo
+	"\\x{3130}-\\x{318F}",
 
-  // Oriya
-  "\\x{0B00}-\\x{0B7F}",
+	// Oriya
+	"\\x{0B00}-\\x{0B7F}",
 
-  // Kanbun
-  "\\x{3190}-\\x{319F}",
+	// Kanbun
+	"\\x{3190}-\\x{319F}",
 
-  // Tamil
-  "\\x{0B80}-\\x{0BFF}",
+	// Tamil
+	"\\x{0B80}-\\x{0BFF}",
 
-  // Bopomofo Extended
-  "\\x{31A0}-\\x{31BF}",
+	// Bopomofo Extended
+	"\\x{31A0}-\\x{31BF}",
 
-  // Telugu
-  "\\x{0C00}-\\x{0C7F}",
+	// Telugu
+	"\\x{0C00}-\\x{0C7F}",
 
-  // Katakana Phonetic Extensions
-  "\\x{31F0}-\\x{31FF}",
+	// Katakana Phonetic Extensions
+	"\\x{31F0}-\\x{31FF}",
 
-  // Kannada
-  "\\x{0C80}-\\x{0CFF}",
+	// Kannada
+	"\\x{0C80}-\\x{0CFF}",
 
-  // Enclosed CJK Letters and Months
-  "\\x{3200}-\\x{32FF}",
+	// Enclosed CJK Letters and Months
+	"\\x{3200}-\\x{32FF}",
 
-  // Malayalam
-  "\\x{0D00}-\\x{0D7F}",
+	// Malayalam
+	"\\x{0D00}-\\x{0D7F}",
 
-  // CJK Compatibility
-  "\\x{3300}-\\x{33FF}",
+	// CJK Compatibility
+	"\\x{3300}-\\x{33FF}",
 
-  // Sinhala
-  "\\x{0D80}-\\x{0DFF}",
+	// Sinhala
+	"\\x{0D80}-\\x{0DFF}",
 
-  // CJK Unified Ideographs Extension A
-  "\\x{3400}-\\x{4DBF}",
+	// CJK Unified Ideographs Extension A
+	"\\x{3400}-\\x{4DBF}",
 
-  // Thai
-  "\\x{0E00}-\\x{0E7F}",
+	// Thai
+	"\\x{0E00}-\\x{0E7F}",
 
-  // Yijing Hexagram Symbols
-  "\\x{4DC0}-\\x{4DFF}",
+	// Yijing Hexagram Symbols
+	"\\x{4DC0}-\\x{4DFF}",
 
-  // Lao
-  "\\x{0E80}-\\x{0EFF}",
+	// Lao
+	"\\x{0E80}-\\x{0EFF}",
 
-  // CJK Unified Ideographs
-  "\\x{4E00}-\\x{9FFF}",
+	// CJK Unified Ideographs
+	"\\x{4E00}-\\x{9FFF}",
 
-  // Tibetan
-  "\\x{0F00}-\\x{0FFF}",
+	// Tibetan
+	"\\x{0F00}-\\x{0FFF}",
 
-  // Yi Syllables
-  "\\x{A000}-\\x{A48F}",
+	// Yi Syllables
+	"\\x{A000}-\\x{A48F}",
 
-  // Myanmar
-  "\\x{1000}-\\x{109F}",
+	// Myanmar
+	"\\x{1000}-\\x{109F}",
 
-  // Yi Radicals
-  "\\x{A490}-\\x{A4CF}",
+	// Yi Radicals
+	"\\x{A490}-\\x{A4CF}",
 
-  // Georgian
-  "\\x{10A0}-\\x{10FF}",
+	// Georgian
+	"\\x{10A0}-\\x{10FF}",
 
-  // Hangul Syllables
-  "\\x{AC00}-\\x{D7AF}",
+	// Hangul Syllables
+	"\\x{AC00}-\\x{D7AF}",
 
-  // Hangul Jamo
-  "\\x{1100}-\\x{11FF}",
+	// Hangul Jamo
+	"\\x{1100}-\\x{11FF}",
 
-  // High Surrogates
-  "\\x{D800}-\\x{DB7F}",
+	// High Surrogates
+	"\\x{D800}-\\x{DB7F}",
 
-  // Ethiopic
-  "\\x{1200}-\\x{137F}",
+	// Ethiopic
+	"\\x{1200}-\\x{137F}",
 
-  // High Private Use Surrogates
-  "\\x{DB80}-\\x{DBFF}",
+	// High Private Use Surrogates
+	"\\x{DB80}-\\x{DBFF}",
 
-  // Cherokee
-  "\\x{13A0}-\\x{13FF}",
+	// Cherokee
+	"\\x{13A0}-\\x{13FF}",
 
-  // Low Surrogates
-  "\\x{DC00}-\\x{DFFF}",
+	// Low Surrogates
+	"\\x{DC00}-\\x{DFFF}",
 
-  // Unified Canadian Aboriginal Syllabics
-  "\\x{1400}-\\x{167F}",
+	// Unified Canadian Aboriginal Syllabics
+	"\\x{1400}-\\x{167F}",
 
-  // Private Use Area
-  "\\x{E000}-\\x{F8FF}",
+	// Private Use Area
+	"\\x{E000}-\\x{F8FF}",
 
-  // Ogham
-  "\\x{1680}-\\x{169F}",
+	// Ogham
+	"\\x{1680}-\\x{169F}",
 
-  // CJK Compatibility Ideographs
-  "\\x{F900}-\\x{FAFF}",
+	// CJK Compatibility Ideographs
+	"\\x{F900}-\\x{FAFF}",
 
-  // Runic
-  "\\x{16A0}-\\x{16FF}",
+	// Runic
+	"\\x{16A0}-\\x{16FF}",
 
-  // Alphabetic Presentation Forms
-  "\\x{FB00}-\\x{FB4F}",
+	// Alphabetic Presentation Forms
+	"\\x{FB00}-\\x{FB4F}",
 
-  // Tagalog
-  "\\x{1700}-\\x{171F}",
+	// Tagalog
+	"\\x{1700}-\\x{171F}",
 
-  // Arabic Presentation Forms-A
-  "\\x{FB50}-\\x{FDFF}",
+	// Arabic Presentation Forms-A
+	"\\x{FB50}-\\x{FDFF}",
 
-  // Hanunoo
-  "\\x{1720}-\\x{173F}",
+	// Hanunoo
+	"\\x{1720}-\\x{173F}",
 
-  // Variation Selectors
-  "\\x{FE00}-\\x{FE0F}",
+	// Variation Selectors
+	"\\x{FE00}-\\x{FE0F}",
 
-  // Buhid
-  "\\x{1740}-\\x{175F}",
+	// Buhid
+	"\\x{1740}-\\x{175F}",
 
-  // Combining Half Marks
-  "\\x{FE20}-\\x{FE2F}",
+	// Combining Half Marks
+	"\\x{FE20}-\\x{FE2F}",
 
-  // Tagbanwa
-  "\\x{1760}-\\x{177F}",
+	// Tagbanwa
+	"\\x{1760}-\\x{177F}",
 
-  // CJK Compatibility Forms
-  "\\x{FE30}-\\x{FE4F}",
+	// CJK Compatibility Forms
+	"\\x{FE30}-\\x{FE4F}",
 
-  // Khmer
-  "\\x{1780}-\\x{17FF}",
+	// Khmer
+	"\\x{1780}-\\x{17FF}",
 
-  // Small Form Variants
-  "\\x{FE50}-\\x{FE6F}",
+	// Small Form Variants
+	"\\x{FE50}-\\x{FE6F}",
 
-  // Mongolian
-  "\\x{1800}-\\x{18AF}",
+	// Mongolian
+	"\\x{1800}-\\x{18AF}",
 
-  // Arabic Presentation Forms-B
-  "\\x{FE70}-\\x{FEFF}",
+	// Arabic Presentation Forms-B
+	"\\x{FE70}-\\x{FEFF}",
 
-  // Limbu
-  "\\x{1900}-\\x{194F}",
+	// Limbu
+	"\\x{1900}-\\x{194F}",
 
-  // Halfwidth and Fullwidth Forms
-  "\\x{FF00}-\\x{FFEF}",
+	// Halfwidth and Fullwidth Forms
+	"\\x{FF00}-\\x{FFEF}",
 
-  // Tai Le
-  "\\x{1950}-\\x{197F}",
+	// Tai Le
+	"\\x{1950}-\\x{197F}",
 
-  // Specials
-  "\\x{FFF0}-\\x{FFFF}",
+	// Specials
+	"\\x{FFF0}-\\x{FFFF}",
 
-  // Khmer Symbols
-  "\\x{19E0}-\\x{19FF}",
+	// Khmer Symbols
+	"\\x{19E0}-\\x{19FF}",
 
-  // Linear B Syllabary
-  "\\x{10000}-\\x{1007F}",
+	// Linear B Syllabary
+	"\\x{10000}-\\x{1007F}",
 
-  // Phonetic Extensions
-  "\\x{1D00}-\\x{1D7F}",
+	// Phonetic Extensions
+	"\\x{1D00}-\\x{1D7F}",
 
-  // Linear B Ideograms
-  "\\x{10080}-\\x{100FF}",
+	// Linear B Ideograms
+	"\\x{10080}-\\x{100FF}",
 
-  // Latin Extended Additional
-  "\\x{1E00}-\\x{1EFF}",
+	// Latin Extended Additional
+	"\\x{1E00}-\\x{1EFF}",
 
-  // Aegean Numbers
-  "\\x{10100}-\\x{1013F}",
+	// Aegean Numbers
+	"\\x{10100}-\\x{1013F}",
 
-  // Greek Extended
-  "\\x{1F00}-\\x{1FFF}",
+	// Greek Extended
+	"\\x{1F00}-\\x{1FFF}",
 
-  // Old Italic
-  "\\x{10300}-\\x{1032F}",
+	// Old Italic
+	"\\x{10300}-\\x{1032F}",
 
-  // General Punctuation
-  "\\x{2000}-\\x{206F}",
+	// General Punctuation
+	"\\x{2000}-\\x{206F}",
 
-  // Gothic
-  "\\x{10330}-\\x{1034F}",
+	// Gothic
+	"\\x{10330}-\\x{1034F}",
 
-  // Superscripts and Subscripts
-  "\\x{2070}-\\x{209F}",
+	// Superscripts and Subscripts
+	"\\x{2070}-\\x{209F}",
 
-  // Ugaritic
-  "\\x{10380}-\\x{1039F}",
+	// Ugaritic
+	"\\x{10380}-\\x{1039F}",
 
-  // Currency Symbols
-  "\\x{20A0}-\\x{20CF}",
+	// Currency Symbols
+	"\\x{20A0}-\\x{20CF}",
 
-  // Deseret
-  "\\x{10400}-\\x{1044F}",
+	// Deseret
+	"\\x{10400}-\\x{1044F}",
 
-  // Combining Diacritical Marks for Symbols
-  "\\x{20D0}-\\x{20FF}",
+	// Combining Diacritical Marks for Symbols
+	"\\x{20D0}-\\x{20FF}",
 
-  // Shavian
-  "\\x{10450}-\\x{1047F}",
+	// Shavian
+	"\\x{10450}-\\x{1047F}",
 
-  // Letterlike Symbols
-  "\\x{2100}-\\x{214F}",
+	// Letterlike Symbols
+	"\\x{2100}-\\x{214F}",
 
-  // Osmanya
-  "\\x{10480}-\\x{104AF}",
+	// Osmanya
+	"\\x{10480}-\\x{104AF}",
 
-  // Number Forms
-  "\\x{2150}-\\x{218F}",
+	// Number Forms
+	"\\x{2150}-\\x{218F}",
 
-  // Cypriot Syllabary
-  "\\x{10800}-\\x{1083F}",
+	// Cypriot Syllabary
+	"\\x{10800}-\\x{1083F}",
 
-  // Arrows
-  "\\x{2190}-\\x{21FF}",
+	// Arrows
+	"\\x{2190}-\\x{21FF}",
 
-  // Byzantine Musical Symbols
-  "\\x{1D000}-\\x{1D0FF}",
+	// Byzantine Musical Symbols
+	"\\x{1D000}-\\x{1D0FF}",
 
-  // Mathematical Operators
-  "\\x{2200}-\\x{22FF}",
+	// Mathematical Operators
+	"\\x{2200}-\\x{22FF}",
 
-  // Musical Symbols
-  "\\x{1D100}-\\x{1D1FF}",
+	// Musical Symbols
+	"\\x{1D100}-\\x{1D1FF}",
 
-  // Miscellaneous Technical
-  "\\x{2300}-\\x{23FF}",
+	// Miscellaneous Technical
+	"\\x{2300}-\\x{23FF}",
 
-  // Tai Xuan Jing Symbols
-  "\\x{1D300}-\\x{1D35F}",
+	// Tai Xuan Jing Symbols
+	"\\x{1D300}-\\x{1D35F}",
 
-  // Control Pictures
-  "\\x{2400}-\\x{243F}",
+	// Control Pictures
+	"\\x{2400}-\\x{243F}",
 
-  // Mathematical Alphanumeric Symbols
-  "\\x{1D400}-\\x{1D7FF}",
+	// Mathematical Alphanumeric Symbols
+	"\\x{1D400}-\\x{1D7FF}",
 
-  // Optical Character Recognition
-  "\\x{2440}-\\x{245F}",
+	// Optical Character Recognition
+	"\\x{2440}-\\x{245F}",
 
-  // CJK Unified Ideographs Extension B
-  "\\x{20000}-\\x{2A6DF}",
+	// CJK Unified Ideographs Extension B
+	"\\x{20000}-\\x{2A6DF}",
 
-  // Enclosed Alphanumerics
-  "\\x{2460}-\\x{24FF}",
+	// Enclosed Alphanumerics
+	"\\x{2460}-\\x{24FF}",
 
-  // CJK Compatibility Ideographs Supplement
-  "\\x{2F800}-\\x{2FA1F}",
+	// CJK Compatibility Ideographs Supplement
+	"\\x{2F800}-\\x{2FA1F}",
 
-  // Box Drawing
-  "\\x{2500}-\\x{257F}",
+	// Box Drawing
+	"\\x{2500}-\\x{257F}",
 
-  // Tags
-  "\\x{E0000}-\\x{E007F}",
+	// Tags
+	"\\x{E0000}-\\x{E007F}",
 }
 
 func unicode() string {
-  return strings.Join(Unicode, "")
+	return strings.Join(Unicode, "")
 }
 
 /*
@@ -422,17 +422,17 @@ Map can also be used to reset Map in a scanner instance. For example:
 
 */
 func Map() []Definition {
-  return []Definition{
-    Definition{regexp.MustCompile("^[0-9]+"), "NUMBER"},
-    Definition{regexp.MustCompile(
-      fmt.Sprintf("^(?i)([a-z0-9][a-z0-9'%s]+|[%s]{2,})",
-        unicode(), unicode()),
-    ), "WORD"},
-    Definition{regexp.MustCompile("^\\s+"), "WHITESPACE"},
-    Definition{regexp.MustCompile(
-      "^(?i)([a-z]|[^0-9])",
-    ), "CHAR"},
-  }
+	return []Definition{
+		{regexp.MustCompile("^[0-9]+"), "NUMBER"},
+		{regexp.MustCompile(
+			fmt.Sprintf("^(?i)([a-z0-9][a-z0-9'%s]+|[%s]{2,})",
+				unicode(), unicode()),
+		), "WORD"},
+		{regexp.MustCompile("^\\s+"), "WHITESPACE"},
+		{regexp.MustCompile(
+			"^(?i)([a-z]|[^0-9])",
+		), "CHAR"},
+	}
 }
 
 /*
@@ -441,8 +441,8 @@ Scanner is the main struct and contains all of the methods for parsing, etc.
 
 */
 type Scanner struct {
-  Tokens [][]string
-  Map    []Definition
+	Tokens [][]string
+	Map    []Definition
 }
 
 /*
@@ -464,9 +464,9 @@ For example:
 
 */
 func New() Scanner {
-  return Scanner{
-    Map: Map(),
-  }
+	return Scanner{
+		Map: Map(),
+	}
 }
 
 /*
@@ -494,14 +494,14 @@ simply join it back.
 
 */
 func (s Scanner) Join() string {
-  var joined string
+	var joined string
 
-  for len(s.Tokens) > 0 {
-    joined = joined + s.Tokens[0][1]
-    s.Tokens = s.Tokens[1:]
-  }
+	for len(s.Tokens) > 0 {
+		joined = joined + s.Tokens[0][1]
+		s.Tokens = s.Tokens[1:]
+	}
 
-  return joined
+	return joined
 }
 
 /*
@@ -545,30 +545,30 @@ For instance, taking a look at our test for this:
 
 */
 func (s Scanner) Parse(data interface{}) (Scanner, error) {
-  s.Tokens = make([][]string, 0)
+	s.Tokens = make([][]string, 0)
 
-  switch data.(type) {
-  case []byte:
-    data = string(data.([]byte))
-  case string:
-    data = data.(string)
-  default:
-    return s, fmt.Errorf("Scanner.Parse only accepts []byte and string types.")
-  }
+	switch data.(type) {
+	case []byte:
+		data = string(data.([]byte))
+	case string:
+		data = data.(string)
+	default:
+		return s, fmt.Errorf("Scanner.Parse only accepts []byte and string types.")
+	}
 
-  for len(data.(string)) > 0 {
-    for _, def := range s.Map {
-      r, t := def.Regex, def.Type
-      str := r.FindString(data.(string))
-      if len(str) > 0 {
-        s.Tokens = append(s.Tokens, []string{t, str})
-        data = data.(string)[len(str):]
-        break
-      }
-    }
-  }
+	for len(data.(string)) > 0 {
+		for _, def := range s.Map {
+			r, t := def.Regex, def.Type
+			str := r.FindString(data.(string))
+			if len(str) > 0 {
+				s.Tokens = append(s.Tokens, []string{t, str})
+				data = data.(string)[len(str):]
+				break
+			}
+		}
+	}
 
-  return s, nil
+	return s, nil
 }
 
 /*
@@ -605,10 +605,10 @@ For an example, let's take a look at the test reading our testdata directory:
 
 */
 func (s Scanner) ReadFile(filename string) (Scanner, error) {
-  data, err := ioutil.ReadFile(filename)
-  if err != nil {
-    return s, err
-  }
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return s, err
+	}
 
-  return s.Parse(data)
+	return s.Parse(data)
 }
