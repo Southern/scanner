@@ -4,6 +4,8 @@
 
 [Documentation](https://godoc.org/github.com/Southern/scanner)
 
+This project was sponsored by [Sourcegraph](https://sourcegraph.com)
+
 ## License
 Copyright (c) 2014 Colton Baker
 
