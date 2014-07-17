@@ -41,7 +41,7 @@ Then you can just copy it to your clipboard with another pipe and paste it
 here. Simple as that.
 
 */
-var Unicode = []string{
+var unicode = []string{
 	// Block Elements
 	"\\x{2580}-\\x{259F}",
 
@@ -406,8 +406,17 @@ var Unicode = []string{
 	"\\x{E0000}-\\x{E007F}",
 }
 
-func unicode() string {
-	return strings.Join(Unicode, "")
+/*
+Unicode returns all UTF16 compatible character ranges that can be used in Map.
+
+An example of is usage is:
+	{regexp.MustCompile(
+		fmt.Sprintf("^(?i)([a-z0-9][a-z0-9'%s]+|[%s]{2,})",
+			scanner.Unicode(), scanner.Unicode()),
+	), "WORD"},
+*/
+func Unicode() string {
+	return strings.Join(unicode, "")
 }
 
 /*
@@ -426,7 +435,7 @@ func Map() []Definition {
 		{regexp.MustCompile("^[0-9]+"), "NUMBER"},
 		{regexp.MustCompile(
 			fmt.Sprintf("^(?i)([a-z0-9][a-z0-9'%s]+|[%s]{2,})",
-				unicode(), unicode()),
+				Unicode(), Unicode()),
 		), "WORD"},
 		{regexp.MustCompile("^\\s+"), "WHITESPACE"},
 		{regexp.MustCompile(
