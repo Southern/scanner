@@ -39,14 +39,15 @@ func TestScannerBasics(t *testing.T) {
 	s, err := s.Parse(str)
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-		return
+		t.Fatalf("Unexpected error: %s", err)
 	}
 
-	for i := 0; i < len(s.Tokens); i++ {
-		if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
-			t.Errorf("Expected %+v, got %+v", expects[i], s.Tokens[i])
-			return
+	for i, expect := range expects {
+		if i > len(s.Tokens)-1 {
+			t.Fatalf("Excpected more output: %+v\n", expects[i:])
+		}
+		if s.Tokens[i][0] != expect[0] || s.Tokens[i][1] != expect[1] {
+			t.Fatalf("Expected %+v, got %+v", expect, s.Tokens[i])
 		}
 	}
 
@@ -67,16 +68,18 @@ func TestScannerManipulation(t *testing.T) {
 	s, err := s.Parse(str)
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-		return
+		t.Fatalf("Unexpected error: %s", err)
 	}
 
 	Status("Parsed data: %+v\n", s)
 	s.Tokens[2][1] = "test2"
-	for i := 0; i < len(s.Tokens); i++ {
-		if s.Tokens[i][0] != expects[i][0] || s.Tokens[i][1] != expects[i][1] {
-			t.Errorf("Expected %+v, got %+v", expects[i], s.Tokens[i])
-			return
+
+	for i, expect := range expects {
+		if i > len(s.Tokens)-1 {
+			t.Fatalf("Excpected more output: %+v\n", expects[i:])
+		}
+		if s.Tokens[i][0] != expect[0] || s.Tokens[i][1] != expect[1] {
+			t.Fatalf("Expected %+v, got %+v", expect, s.Tokens[i])
 		}
 	}
 
@@ -88,8 +91,7 @@ func TestScannerReadFile(t *testing.T) {
 	files, err := ioutil.ReadDir("testdata")
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-		return
+		t.Fatalf("Unexpected error: %s", err)
 	}
 
 	Status("Scanning all files found in testdata directory")
@@ -100,8 +102,7 @@ func TestScannerReadFile(t *testing.T) {
 		s, err = s.ReadFile(file)
 
 		if err != nil {
-			t.Errorf("Unexpected error: %s", err)
-			return
+			t.Fatalf("Unexpected error: %s", err)
 		}
 
 		Status("Scanned: %+v", s)
@@ -117,7 +118,7 @@ func TestScannerNonexistentFile(t *testing.T) {
 	Status("Scan: %+v\n", s)
 
 	if len(s.Tokens) > 0 || err == nil {
-		t.Errorf("Expected this test to fail.")
+		t.Fatal("Expected this test to fail.")
 	}
 }
 
@@ -125,8 +126,7 @@ func TestJoiningLexBackToString(t *testing.T) {
 	data, err := s.ReadFile(strings.Join([]string{"testdata", "html.txt"}, "/"))
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-		return
+		t.Fatalf("Unexpected error: %s", err)
 	}
 
 	Status("Scanned data: %+v", data)
@@ -144,7 +144,7 @@ func TestInvalidDataType(t *testing.T) {
 	Status("Error returned: %s", err)
 
 	if err == nil {
-		t.Errorf("Expected this test to fail.")
+		t.Fatalf("Expected this test to fail.")
 	}
 }
 
@@ -155,8 +155,7 @@ func TestScannerRandomString(t *testing.T) {
 	s, err := s.Parse(str)
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-		return
+		t.Fatalf("Unexpected error: %s", err)
 	}
 
 	Status("Scanned: %+v", s)
@@ -166,8 +165,7 @@ func TestScannerRandomString(t *testing.T) {
 	joined := s.Join()
 
 	if joined != str {
-		t.Errorf("The joined string was not the same as what was input.")
-		return
+		t.Fatal("The joined string was not the same as what was input.")
 	}
 
 	Status("String parsed correctly.")
@@ -180,8 +178,7 @@ func TestScannerRussianString(t *testing.T) {
 	s, err := s.Parse(str)
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-		return
+		t.Fatalf("Unexpected error: %s", err)
 	}
 
 	Status("Scanned: %+v", s)
@@ -191,8 +188,7 @@ func TestScannerRussianString(t *testing.T) {
 	joined := s.Join()
 
 	if joined != str {
-		t.Errorf("The joined string was not the same as what was input.")
-		return
+		t.Fatal("The joined string was not the same as what was input.")
 	}
 
 	Status("String parsed correctly.")
@@ -205,8 +201,7 @@ func TestScannerGreekString(t *testing.T) {
 	s, err := s.Parse(str)
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
-		return
+		t.Fatalf("Unexpected error: %s", err)
 	}
 
 	Status("Scanned: %+v", s)
@@ -216,8 +211,7 @@ func TestScannerGreekString(t *testing.T) {
 	joined := s.Join()
 
 	if joined != str {
-		t.Errorf("The joined string was not the same as what was input.")
-		return
+		t.Fatal("The joined string was not the same as what was input.")
 	}
 
 	Status("String parsed correctly")
@@ -230,7 +224,7 @@ func TestScannerArabicString(t *testing.T) {
 	s, err := s.Parse(str)
 
 	if err != nil {
-		t.Errorf("Unexpected error: %s", err)
+		t.Fatalf("Unexpected error: %s", err)
 		return
 	}
 
@@ -241,8 +235,7 @@ func TestScannerArabicString(t *testing.T) {
 	joined := s.Join()
 
 	if joined != str {
-		t.Errorf("The joined string was not the same as what was input.")
-		return
+		t.Fatal("The joined string was not the same as what was input.")
 	}
 
 	Status("String parsed correctly")
