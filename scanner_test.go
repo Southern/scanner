@@ -10,7 +10,7 @@ import (
 var s = scanner.New()
 
 func TestScannerBasics(t *testing.T) {
-	str := "test-1 test + 1 test+1 -1 1000 -1000 0x00 0xFF"
+	str := "test-1 test + 1 test+1 -1 1000 -1000"
 	expects := [][]string{
 		{"WORD", "test"},
 		{"CHAR", "-"},
@@ -33,10 +33,6 @@ func TestScannerBasics(t *testing.T) {
 		{"WHITESPACE", " "},
 		{"CHAR", "-"},
 		{"NUMBER", "1000"},
-		{"WHITESPACE", " "},
-		{"HEX", "0x00"},
-		{"WHITESPACE", " "},
-		{"HEX", "0xFF"},
 	}
 	Status("Parsing \"%s\"", str)
 
